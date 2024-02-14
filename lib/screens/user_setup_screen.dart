@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class UserSetupScreen extends StatefulWidget {
+  const UserSetupScreen({super.key});
+
   @override
   _UserSetupScreen createState() => _UserSetupScreen();
 }
@@ -28,6 +30,8 @@ class SelectionData {
 }
 
 class SetupProcess extends StatefulWidget {
+  const SetupProcess({super.key});
+
   @override
   _SetupProcessState createState() => _SetupProcessState();
 }
@@ -59,14 +63,14 @@ class _SetupProcessState extends State<SetupProcess> {
   @override
   Widget build(BuildContext context) {
     List<Widget> stepWidgets = [
-      StepOne(onSelection: (value) => data.daysAvailable = value),
+      StepOne(onSelection: (value) => data.daysAvailable = value),/* 
       StepTwo(onSelection: (value) => data.hoursAvailable = value),
-      StepTwo(onSelection: (value) => data.mainGoal = value),
+      StepTwo(onSelection: (value) => data.mainGoal = value), */
     ];
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Processo de Setup"),
+        title: const Text("Processo de Setup"),
       ),
       body: stepWidgets[currentStep],
       floatingActionButton: Row(
@@ -75,11 +79,11 @@ class _SetupProcessState extends State<SetupProcess> {
           if(currentStep > 0)
             FloatingActionButton(
               onPressed: previousStep,
-              child: Icon(Icons.arrow_back)
+              child: const Icon(Icons.arrow_back)
             ),
           FloatingActionButton(
             onPressed: nextStep,
-            child: Icon(Icons.arrow_forward),
+            child: const Icon(Icons.arrow_forward),
           ),
         ],
       ),
@@ -91,22 +95,34 @@ class _SetupProcessState extends State<SetupProcess> {
 class StepOne extends StatefulWidget {
   final ValueChanged<int> onSelection;
 
-  StepOne({Key? key, required this.onSelection});
+  const StepOne({Key? key, required this.onSelection}) : super(key: key);
+
+  @override
+  _StepOneState createState() => _StepOneState();
+}
+
+class _StepOneState extends State<StepOne> {
+  int _selectedDays = 0; // default or previously selected value
 
   @override
   Widget build(BuildContext context) {
-    return Container()
+    List<int> dayOptions = [1, 2, 3, 4, 5, 6, 7]; // for example
+
+    return Column(
+      children: [
+        ...dayOptions.map((days) => ChoiceChip(
+              label: Text('$days dias'),
+              selected: _selectedDays == days,
+              onSelected: (bool selected) {
+                setState(() {
+                  if (selected) {
+                    _selectedDays = days;
+                    widget.onSelection(days);
+                  }
+                });
+              },
+            )),
+      ],
+    );
   }
-}
-
-class StepTwo extends StatelessWidget {
-  final Function(int) onSelection;
-
-  StepTwo({required this.onSelection});
-}
-
-class StepThree extends StatelessWidget {
-  final Function(int) onSelection;
-
-  StepThree({required this.onSelection});
 }
