@@ -1,7 +1,6 @@
+import 'package:flexform/screens/exercises_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:numberpicker/numberpicker.dart';
 
 class UserSetupScreen extends StatelessWidget {
   const UserSetupScreen({Key? key}) : super(key: key);
@@ -12,7 +11,7 @@ class UserSetupScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Vamos começar"),
       ),
-      body: SetupProcess(),
+      body: const SetupProcess(),
     );
   }
 }
@@ -44,34 +43,34 @@ class SuccessScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Setup Complete"),
+        title: const Text(""),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(
+            const Icon(
               Icons.check_circle_outline,
               color: Colors.green,
               size: 120.0,
             ),
             Text(
               "Bem vindo, ${data.name}!",
-              style: TextStyle(fontSize: 22.0),
+              style: const TextStyle(fontSize: 22.0),
             ),
-            SizedBox(height: 20),
-            Text(
+            const SizedBox(height: 20),
+            const Text(
               "Setup concluído.",
               style: TextStyle(fontSize: 18.0),
             ),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => MainScreen()),
+                  MaterialPageRoute(builder: (_) => const ExercisesScreen()),
                 );
               },
-              child: Text('Start using the app'),
+              child: const Text('Começa a puxar ferro'),
             ),
           ],
         ),
@@ -105,25 +104,25 @@ class _SetupProcessState extends State<SetupProcess> {
     ];
   }
 
-    void nextStep() async {
-      if (currentStep < stepWidgets.length - 1) {
-        setState(() {
-          currentStep++;
-        });
-      } else {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setInt('daysAvailable', data.daysAvailable ?? 0);
-        await prefs.setInt('hoursAvailable', data.hoursAvailable ?? 0);
-        await prefs.setString('mainGoal', data.mainGoal ?? '');
-        await prefs.setInt('age', data.age ?? 18);
-        await prefs.setString('experienceLevel', data.experienceLevel ?? '');
-        await prefs.setString('name', data.name ?? '');
+  void nextStep() async {
+    if (currentStep < stepWidgets.length - 1) {
+      setState(() {
+        currentStep++;
+      });
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('daysAvailable', data.daysAvailable ?? 0);
+      await prefs.setInt('hoursAvailable', data.hoursAvailable ?? 0);
+      await prefs.setString('mainGoal', data.mainGoal ?? '');
+      await prefs.setInt('age', data.age ?? 18);
+      await prefs.setString('experienceLevel', data.experienceLevel ?? '');
+      await prefs.setString('name', data.name ?? '');
 
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => SuccessScreen(data: data)),
-        );
-      }
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => SuccessScreen(data: data)),
+      );
     }
+  }
 
   void previousStep() {
     if (currentStep > 0) {
@@ -180,19 +179,22 @@ class _StepOneState extends State<StepOne> {
 
   @override
   Widget build(BuildContext context) {
-    List<int> dayOptions = [1, 2, 3, 4, 5, 6, 7];
+    List<int> dayOptions = [1, 2, 3, 4, 5];
 
-    return ListView(
+    return Column(
       children: [
         ...dayOptions.map(
-          (days) => ChoiceChip(
-            label: Text('$days dias'),
-            selected: _selectedDays == days,
-            onSelected: (bool selected) {
-              setState(() {
-                _selectedDays = days;
-                widget.onSelection(days);
-              });
+          (days) => RadioListTile<int>(
+            title: Text('$days dias'),
+            value: days,
+            groupValue: _selectedDays,
+            onChanged: (int? value) {
+              if (value != null) {
+                setState(() {
+                  _selectedDays = value;
+                  widget.onSelection(value);
+                });
+              }
             },
           ),
         ),
@@ -393,6 +395,9 @@ class _StepUserNameState extends State<StepUserName> {
 
   @override
   Widget build(BuildContext context) {
+    // The 'data' variable needs to be available here for this to work.
+    // If 'data' is a member of the parent state, you might need to pass it down to the StepUserName widget.
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -405,7 +410,19 @@ class _StepUserNameState extends State<StepUserName> {
             ),
           ),
           ElevatedButton(
-            onPressed: () => widget.onNameEntered(_nameController.text),
+            onPressed: () {
+              if (_nameController.text.isNotEmpty) {
+                // Assuming 'data' is a property of the parent state
+                var parentState = context.findAncestorStateOfType<_SetupProcessState>();
+                var data = parentState?.data; // Getting the data from the parent state
+                if(data != null) {
+                  data.name = _nameController.text;
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (_) => SuccessScreen(data: data)),
+                  );
+                }
+              }
+            },
             child: const Text('Confirmar'),
           ),
         ],
