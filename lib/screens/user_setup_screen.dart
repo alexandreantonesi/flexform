@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:numberpicker/numberpicker.dart';
 
@@ -34,6 +35,51 @@ class SelectionData {
   });
 }
 
+class SuccessScreen extends StatelessWidget {
+  final SelectionData data;
+
+  const SuccessScreen({Key? key, required this.data}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Setup Complete"),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(
+              Icons.check_circle_outline,
+              color: Colors.green,
+              size: 120.0,
+            ),
+            Text(
+              "Bem vindo, ${data.name}!",
+              style: TextStyle(fontSize: 22.0),
+            ),
+            SizedBox(height: 20),
+            Text(
+              "Setup concluído.",
+              style: TextStyle(fontSize: 18.0),
+            ),
+            SizedBox(height: 40),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (_) => MainScreen()),
+                );
+              },
+              child: Text('Start using the app'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class SetupProcess extends StatefulWidget {
   const SetupProcess({Key? key}) : super(key: key);
 
@@ -44,36 +90,51 @@ class SetupProcess extends StatefulWidget {
 class _SetupProcessState extends State<SetupProcess> {
   int currentStep = 0;
   SelectionData data = SelectionData();
-
-  void nextStep() {
-    setState(() {
-      if (currentStep < 4) {
-        currentStep++;
-      } else {
-        //depois para completar o setup
-      }
-    });
-  }
-
-  void previousStep() {
-    setState(() {
-      if (currentStep > 0) {
-        currentStep--;
-      }
-    });
-  }
+  late List<Widget> stepWidgets;
 
   @override
-  Widget build(BuildContext context) {
-    List<Widget> stepWidgets = [
-      StepOne(onSelection: (value) => data.daysAvailable = value, initialSelection: data.daysAvailable ?? 0,),
-      StepTwo(onSelection: (value) => data.hoursAvailable = value, initialSelection: data.hoursAvailable ?? 0,),
-      StepThree(onSelection: (part) => data.mainGoal = part, initialSelection: data.mainGoal ?? "Peito, Tríceps, Ombros",),
+  void initState() {
+    super.initState();
+    stepWidgets = [
+      StepOne(onSelection: (value) => data.daysAvailable = value, initialSelection: data.daysAvailable ?? 0),
+      StepTwo(onSelection: (value) => data.hoursAvailable = value, initialSelection: data.hoursAvailable ?? 0),
+      StepThree(onSelection: (part) => data.mainGoal = part, initialSelection: data.mainGoal ?? "Peito, Tríceps, Ombros"),
       StepAgeSelection(onSelection: (value) => data.age = value),
       StepExperienceLevel(onSelection: (level) => data.experienceLevel = level),
       StepUserName(onNameEntered: (name) => data.name = name),
     ];
+  }
 
+    void nextStep() async {
+      if (currentStep < stepWidgets.length - 1) {
+        setState(() {
+          currentStep++;
+        });
+      } else {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setInt('daysAvailable', data.daysAvailable ?? 0);
+        await prefs.setInt('hoursAvailable', data.hoursAvailable ?? 0);
+        await prefs.setString('mainGoal', data.mainGoal ?? '');
+        await prefs.setInt('age', data.age ?? 18);
+        await prefs.setString('experienceLevel', data.experienceLevel ?? '');
+        await prefs.setString('name', data.name ?? '');
+
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => SuccessScreen(data: data)),
+        );
+      }
+    }
+
+  void previousStep() {
+    if (currentStep > 0) {
+      setState(() {
+        currentStep--;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Processo de Setup"),
@@ -332,14 +393,23 @@ class _StepUserNameState extends State<StepUserName> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: _nameController,
-      decoration: const InputDecoration(
-        labelText: 'batata',
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: _nameController,
+            decoration: const InputDecoration(
+              labelText: 'Qual é o teu nome?',
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => widget.onNameEntered(_nameController.text),
+            child: const Text('Confirmar'),
+          ),
+        ],
       ),
-      onSubmitted: (value) {
-        widget.onNameEntered(value);
-      },
     );
   }
 }

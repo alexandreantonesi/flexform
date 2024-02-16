@@ -1,34 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flexform/screens/user_setup_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool setupCompleted = prefs.getBool('setupCompleted') ?? false;
+  runApp(MyApp(setupCompleted: setupCompleted));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool setupCompleted;
+  const MyApp({super.key, required this.setupCompleted});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'FlexForm',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const SetupProcess(),
+      home: setupCompleted ? const MyHomePage(title: 'FlexForm Home') : const UserSetupScreen(),
     );
   }
 }
 
-
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
   final String title;
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -44,7 +47,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
       body: Center(
@@ -52,11 +54,11 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-              'You have clicked the button this many times:',
+              'You have pushed the button this many times:',
             ),
             Text(
               '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+              style: Theme.of(context).textTheme.headline4,
             ),
           ],
         ),
