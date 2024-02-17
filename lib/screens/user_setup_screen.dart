@@ -89,46 +89,78 @@ class SetupProcess extends StatefulWidget {
 class _SetupProcessState extends State<SetupProcess> {
   int currentStep = 0;
   SelectionData data = SelectionData();
-  late List<Widget> stepWidgets;
+  List<Widget> stepWidgets = [];
 
   @override
   void initState() {
     super.initState();
     stepWidgets = [
-      StepOne(onSelection: (value) => data.daysAvailable = value, initialSelection: data.daysAvailable ?? 0),
-      StepTwo(onSelection: (value) => data.hoursAvailable = value, initialSelection: data.hoursAvailable ?? 0),
-      StepThree(onSelection: (part) => data.mainGoal = part, initialSelection: data.mainGoal ?? "Peito, Tríceps, Ombros"),
-      StepAgeSelection(onSelection: (value) => data.age = value),
-      StepExperienceLevel(onSelection: (level) => data.experienceLevel = level),
-      StepUserName(onNameEntered: (name) => data.name = name),
+      StepOne(
+        onSelection: (value) => setState(() => data.daysAvailable = value),
+        initialSelection: data.daysAvailable ?? 0,
+      ),
+      StepTwo(
+        onSelection: (value) => setState(() => data.hoursAvailable = value),
+        initialSelection: data.hoursAvailable ?? 0,
+      ),
+      StepThree(
+        onSelection: (part) => setState(() => data.mainGoal = part),
+        initialSelection: data.mainGoal ?? "Peito, Tríceps, Ombros",
+      ),
+      StepAgeSelection(
+        onSelection: (value) => setState(() => data.age = value),
+      ),
+      StepExperienceLevel(
+        onSelection: (level) => setState(() => data.experienceLevel = level),
+      ),
+      StepUserName(
+        onNameEntered: (name) => setState(() => data.name = name),
+      ),
     ];
   }
 
   void nextStep() async {
-    if (currentStep < stepWidgets.length - 1) {
-      setState(() {
-        currentStep++;
-      });
-    } else {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('daysAvailable', data.daysAvailable ?? 0);
-      await prefs.setInt('hoursAvailable', data.hoursAvailable ?? 0);
-      await prefs.setString('mainGoal', data.mainGoal ?? '');
-      await prefs.setInt('age', data.age ?? 18);
-      await prefs.setString('experienceLevel', data.experienceLevel ?? '');
-      await prefs.setString('name', data.name ?? '');
+  if (currentStep < stepWidgets.length - 1) {
+    setState(() => currentStep++);
+  } else {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('daysAvailable', data.daysAvailable ?? 0);
+    await prefs.setInt('hoursAvailable', data.hoursAvailable ?? 0);
+    await prefs.setString('mainGoal', data.mainGoal ?? '');
+    await prefs.setInt('age', data.age ?? 0);
+    await prefs.setString('experienceLevel', data.experienceLevel ?? '');
+    await prefs.setString('name', data.name ?? '');
 
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => SuccessScreen(data: data)),
-      );
+    await prefs.setBool('setupCompleted', true);
+
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => const ExercisesScreen()),
+        );
+      }
+    }
+
+  bool isSelectionValid(int stepIndex) {
+    switch (stepIndex) {
+      case 0:
+        return data.daysAvailable != null;
+      case 1:
+        return data.hoursAvailable != null;
+      case 2:
+        return data.mainGoal != null && data.mainGoal!.isNotEmpty;
+      case 3:
+        return data.age != null;
+      case 4:
+        return data.experienceLevel != null && data.experienceLevel!.isNotEmpty;
+      case 5:
+        return data.name != null && data.name!.isNotEmpty;
+      default:
+        return false;
     }
   }
 
   void previousStep() {
     if (currentStep > 0) {
-      setState(() {
-        currentStep--;
-      });
+      setState(() => currentStep--);
     }
   }
 
@@ -136,21 +168,25 @@ class _SetupProcessState extends State<SetupProcess> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Processo de Setup"),
+        title: Text("Processo de Setup - Passo ${currentStep + 1} de ${stepWidgets.length}"),
       ),
-      body: stepWidgets[currentStep],
+      body: SingleChildScrollView(
+        child: stepWidgets[currentStep],
+      ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           if (currentStep > 0)
             FloatingActionButton(
               onPressed: previousStep,
-              child: const Icon(Icons.arrow_back),
+              child: Icon(Icons.arrow_back),
+              backgroundColor: Colors.blue,
             ),
           if (currentStep < stepWidgets.length - 1)
             FloatingActionButton(
               onPressed: nextStep,
-              child: const Icon(Icons.arrow_forward),
+              child: Icon(Icons.arrow_forward),
+              backgroundColor: isSelectionValid(currentStep) ? Colors.blue : Colors.grey,
             ),
         ],
       ),
@@ -207,40 +243,41 @@ class StepTwo extends StatefulWidget {
   final ValueChanged<int> onSelection;
   final int initialSelection;
 
-  const StepTwo({Key? key, required this.onSelection, required this.initialSelection}) : super(key: key);
+  const StepTwo({Key? key, required this.onSelection, required this.initialSelection})
+      : super(key: key);
 
   @override
   _StepTwoState createState() => _StepTwoState();
 }
 
 class _StepTwoState extends State<StepTwo> {
-  late int _selectedHours;
+  late int selectedHours;
 
   @override
   void initState() {
     super.initState();
-    _selectedHours = widget.initialSelection;
+    selectedHours = widget.initialSelection;
   }
 
   @override
   Widget build(BuildContext context) {
     List<int> hourOptions = [30, 60, 90, 120];
-
-    return ListView(
-      children: [
-        ...hourOptions.map(
-          (minutes) => ChoiceChip(
-            label: Text(minutes == 30 ? '30 min' : '${minutes ~/ 60}h'),
-            selected: _selectedHours == minutes,
-            onSelected: (bool selected) {
+    return Column(
+      children: hourOptions.map((int value) {
+        return ListTile(
+          title: Text(value == 30 ? '30 min' : '${value ~/ 60}h'),
+          leading: Radio<int>(
+            value: value,
+            groupValue: selectedHours,
+            onChanged: (int? newValue) {
               setState(() {
-                _selectedHours = minutes;
-                widget.onSelection(minutes);
+                selectedHours = newValue!;
+                widget.onSelection(selectedHours);
               });
             },
           ),
-        ),
-      ],
+        );
+      }).toList(),
     );
   }
 }
@@ -249,38 +286,44 @@ class StepThree extends StatefulWidget {
   final ValueChanged<String> onSelection;
   final String initialSelection;
 
-  const StepThree({Key? key, required this.onSelection, required this.initialSelection}) : super(key: key);
+  const StepThree({Key? key, required this.onSelection, required this.initialSelection})
+      : super(key: key);
 
   @override
   _StepThreeState createState() => _StepThreeState();
 }
 
 class _StepThreeState extends State<StepThree> {
-  late String _selectedBodyPart;
+  late String selectedPart;
 
   @override
   void initState() {
     super.initState();
-    _selectedBodyPart = widget.initialSelection;
+    selectedPart = widget.initialSelection;
   }
 
   @override
   Widget build(BuildContext context) {
-    List<String> bodyPartOptions = ["Peito, Tríceps, Ombros", "Costas e Bíceps", "Pernas"];
+    List<String> bodyParts = ["Peito, Tríceps, Ombros", "Costas e Bíceps", "Pernas"];
 
-    return ListView(
-      children: bodyPartOptions.map((part) => ChoiceChip(
-        label: Text(part),
-        selected: _selectedBodyPart == part,
-        onSelected: (bool selected) {
-          setState(() {
-            if (selected) {
-              _selectedBodyPart = part;
-              widget.onSelection(part);
-            }
-          });
-        },
-      )).toList(),
+    return StatefulBuilder(
+      builder: (BuildContext context, StateSetter setState) {
+        return Column(
+          children: bodyParts.map((part) {
+            return RadioListTile<String>(
+              title: Text(part),
+              value: part,
+              groupValue: selectedPart,
+              onChanged: (String? value) {
+                if (value != null) {
+                  setState(() => selectedPart = value);
+                  widget.onSelection(value);
+                }
+              },
+            );
+          }).toList(),
+        );
+      },
     );
   }
 }
@@ -334,43 +377,33 @@ class StepExperienceLevel extends StatefulWidget {
 }
 
 class _StepExperienceLevelState extends State<StepExperienceLevel> {
-  String _selectedLevel = '';
+  String? _selectedLevel;
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        Center(
-          child: ListTile(
-            title: const Text('Sou completamente novo nisto'),
-            leading: Radio<String>(
-              value: 'unexperienced',
+    List<String> experienceLevels = [
+      'Sou completamente novo',
+      'Já treinei anteriormente',
+    ];
+
+    return StatefulBuilder(
+      builder: (BuildContext context, StateSetter setState) {
+        return Column(
+          children: experienceLevels.map((level) {
+            return RadioListTile<String>(
+              title: Text(level),
+              value: level,
               groupValue: _selectedLevel,
-              onChanged: (value) {
-                setState(() {
-                  _selectedLevel = value!;
+              onChanged: (String? value) {
+                if (value != null) {
+                  setState(() => _selectedLevel = value);
                   widget.onSelection(value);
-                });
+                }
               },
-            ),
-          ),
-        ),
-        Center(
-          child: ListTile(
-            title: const Text('Já levantei pesos antes'),
-            leading: Radio<String>(
-              value: 'experienced',
-              groupValue: _selectedLevel,
-              onChanged: (value) {
-                setState(() {
-                  _selectedLevel = value!;
-                  widget.onSelection(value);
-                });
-              },
-            ),
-          ),
-        ),
-      ],
+            );
+          }).toList(),
+        );
+      },
     );
   }
 }
@@ -395,8 +428,6 @@ class _StepUserNameState extends State<StepUserName> {
 
   @override
   Widget build(BuildContext context) {
-    // The 'data' variable needs to be available here for this to work.
-    // If 'data' is a member of the parent state, you might need to pass it down to the StepUserName widget.
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -412,9 +443,8 @@ class _StepUserNameState extends State<StepUserName> {
           ElevatedButton(
             onPressed: () {
               if (_nameController.text.isNotEmpty) {
-                // Assuming 'data' is a property of the parent state
                 var parentState = context.findAncestorStateOfType<_SetupProcessState>();
-                var data = parentState?.data; // Getting the data from the parent state
+                var data = parentState?.data;
                 if(data != null) {
                   data.name = _nameController.text;
                   Navigator.of(context).pushReplacement(

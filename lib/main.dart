@@ -5,8 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Required for async main function
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  bool setupCompleted = prefs.getBool('setupCompleted') ?? false;
+  final prefs = await SharedPreferences.getInstance();
+  final setupCompleted = prefs.getBool('setupCompleted') ?? false;
 
   runApp(MyApp(setupCompleted: setupCompleted));
 }
