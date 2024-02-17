@@ -83,18 +83,16 @@ class SetupProcess extends StatefulWidget {
   const SetupProcess({Key? key}) : super(key: key);
 
   @override
-  _SetupProcessState createState() => _SetupProcessState();
+  SetupProcessState createState() => SetupProcessState();
 }
 
-class _SetupProcessState extends State<SetupProcess> {
+class SetupProcessState extends State<SetupProcess> {
   int currentStep = 0;
-  SelectionData data = SelectionData();
-  List<Widget> stepWidgets = [];
+  final SelectionData data = SelectionData();
 
   @override
-  void initState() {
-    super.initState();
-    stepWidgets = [
+  Widget build(BuildContext context) {
+    List<Widget> stepWidgets = [
       StepOne(
         onSelection: (value) => setState(() => data.daysAvailable = value),
         initialSelection: data.daysAvailable ?? 0,
@@ -117,29 +115,48 @@ class _SetupProcessState extends State<SetupProcess> {
         onNameEntered: (name) => setState(() => data.name = name),
       ),
     ];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Processo de Setup - Passo ${currentStep + 1} de ${stepWidgets.length}"),
+      ),
+      body: SingleChildScrollView(
+        child: stepWidgets[currentStep],
+      ),
+      floatingActionButton: navigationButtons(stepWidgets),
+    );
   }
 
-  void nextStep() async {
-  if (currentStep < stepWidgets.length - 1) {
-    setState(() => currentStep++);
-  } else {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('daysAvailable', data.daysAvailable ?? 0);
-    await prefs.setInt('hoursAvailable', data.hoursAvailable ?? 0);
-    await prefs.setString('mainGoal', data.mainGoal ?? '');
-    await prefs.setInt('age', data.age ?? 0);
-    await prefs.setString('experienceLevel', data.experienceLevel ?? '');
-    await prefs.setString('name', data.name ?? '');
-
-    await prefs.setBool('setupCompleted', true);
-
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const ExercisesScreen()),
-        );
-      }
-    }
+  Row navigationButtons(List<Widget> stepWidgets) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        if (currentStep > 0)
+          FloatingActionButton(
+            onPressed: () => setState(() => currentStep--),
+            child: const Icon(Icons.arrow_back),
+            backgroundColor: Colors.blue,
+          ),
+        if (currentStep < stepWidgets.length - 1)
+          FloatingActionButton(
+            onPressed: () {
+              if (isSelectionValid(currentStep)) {
+                setState(() => currentStep++);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Por favor, complete a seleção antes de prosseguir.')),
+                );
+              }
+            },
+            child: const Icon(Icons.arrow_forward),
+            backgroundColor: isSelectionValid(currentStep) ? Colors.blue : Colors.grey,
+          ),
+      ],
+    );
+  }
 
   bool isSelectionValid(int stepIndex) {
+    // Validation logic remains the same
     switch (stepIndex) {
       case 0:
         return data.daysAvailable != null;
@@ -156,41 +173,6 @@ class _SetupProcessState extends State<SetupProcess> {
       default:
         return false;
     }
-  }
-
-  void previousStep() {
-    if (currentStep > 0) {
-      setState(() => currentStep--);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Processo de Setup - Passo ${currentStep + 1} de ${stepWidgets.length}"),
-      ),
-      body: SingleChildScrollView(
-        child: stepWidgets[currentStep],
-      ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          if (currentStep > 0)
-            FloatingActionButton(
-              onPressed: previousStep,
-              child: Icon(Icons.arrow_back),
-              backgroundColor: Colors.blue,
-            ),
-          if (currentStep < stepWidgets.length - 1)
-            FloatingActionButton(
-              onPressed: nextStep,
-              child: Icon(Icons.arrow_forward),
-              backgroundColor: isSelectionValid(currentStep) ? Colors.blue : Colors.grey,
-            ),
-        ],
-      ),
-    );
   }
 }
 
