@@ -1,7 +1,7 @@
 // services/exercise_service.dart
 
 import '../models/exercise.dart';
-import '../screens/user_setup_screen.dart';
+import 'package:flexform/models/selection_data.dart';
 
 class ExerciseService {
   static final List<Exercise> _exercises = [
@@ -12,6 +12,7 @@ class ExerciseService {
       targetedMuscles: ['Cabeça esternocostal do peitoral maior', 'Tríceps', 'Deltoides anteriores'],
       description: 'Este exercício utiliza halteres para trabalhar principalmente a cabeça esternocostal do peitoral maior, tríceps e deltoides anteriores.',
       equipmentNeeded: ['Halteres'],
+      days: ['segunda-feira', 'quinta-feira'],
     ),
     Exercise(
       id: '2',
@@ -20,6 +21,7 @@ class ExerciseService {
       targetedMuscles: ['Cabeça esternocostal do peitoral maior', 'Tríceps', 'Deltoides anteriores'],
       description: 'Este exercício isola a cabeça esternocostal do peitoral maior, realizado na máquina Peck Deck.',
       equipmentNeeded: ['Máquina Peck Deck'],
+      days: ['segunda-feira', 'quinta-feira'],
     ),
     Exercise(
       id: '3',
@@ -28,6 +30,7 @@ class ExerciseService {
       targetedMuscles: ['Cabeça clavicular do peitoral maior', 'Deltoides anteriores'],
       description: 'Este exercício trabalha a cabeça clavicular do peitoral maior e os deltoides anteriores, realizado com polia.',
       equipmentNeeded: ['Polia'],
+      days: ['segunda-feira', 'quinta-feira'],
     ),
     Exercise(
       id: '4',
@@ -36,6 +39,7 @@ class ExerciseService {
       targetedMuscles: ['Cabeça clavicular do peitoral maior', 'Tríceps', 'Deltoides anteriores'],
       description: 'Realizado em um banco inclinado, este exercício foca na cabeça clavicular do peitoral maior, além de tríceps e deltoides anteriores.',
       equipmentNeeded: ['Halteres', 'Banco Inclinado'],
+      days: ['segunda-feira', 'quinta-feira'],
     ),
     Exercise(
       id: '5',
@@ -44,6 +48,7 @@ class ExerciseService {
       targetedMuscles: ['Bíceps', 'Braquial'],
       description: 'Focado nos bíceps e no músculo braquial, este exercício é realizado com polia.',
       equipmentNeeded: ['Polia'],
+      days: ['terça-feira', 'sexta-feira'],
     ),
     Exercise(
       id: '6',
@@ -52,6 +57,7 @@ class ExerciseService {
       targetedMuscles: ['Bíceps', 'Braquial'],
       description: 'Exercício clássico para bíceps que pode ser realizado de pé ou sentado, utilizando halteres.',
       equipmentNeeded: ['Halteres'],
+      days: ['terça-feira', 'sexta-feira'],
     ),
     Exercise(
       id: '7',
@@ -60,6 +66,7 @@ class ExerciseService {
       targetedMuscles: ['Bíceps'],
       description: 'Conhecida também como rosca predicador, é um exercício que trabalha a cabeça curta do bíceps, realizada em um banco Scott com halteres ou barra.',
       equipmentNeeded: ['Banco Scott', 'Halteres ou Barra'],
+      days: ['terça-feira', 'sexta-feira'],
     ),
     Exercise(
       id: '8',
@@ -68,6 +75,7 @@ class ExerciseService {
       targetedMuscles: ['Bíceps'],
       description: 'Este exercício é realizado em um banco inclinado, enfatizando a cabeça longa do bíceps, utilizando halteres.',
       equipmentNeeded: ['Banco Inclinado', 'Halteres'],
+      days: ['terça-feira', 'sexta-feira'],
     ),
     Exercise(
       id: '9',
@@ -76,6 +84,7 @@ class ExerciseService {
       targetedMuscles: ['Tríceps'],
       description: 'Exercício de tríceps realizado na polia alta, que pode ser feito com corda, barra ou pegada invertida.',
       equipmentNeeded: ['Polia Alta', 'Corda ou Barra'],
+      days: ['segunda-feira', 'quinta-feira'],
     ),
     Exercise(
       id: '10',
@@ -84,6 +93,7 @@ class ExerciseService {
       targetedMuscles: ['Tríceps'],
       description: 'Este exercício foca na parte superior dos tríceps, realizado com uma pegada em supinação na polia alta.',
       equipmentNeeded: ['Polia Alta'],
+      days: ['segunda-feira', 'quinta-feira'],
     ),
     Exercise(
       id: '11',
@@ -92,6 +102,7 @@ class ExerciseService {
       targetedMuscles: ['Dorsais', 'Trapézio', 'Romboides'],
       description: 'Este exercício fortalece as costas, focando nos músculos dorsais, trapézio e romboides, utilizando uma barra em forma de T.',
       equipmentNeeded: ['Barra T'],
+      days: ['terça-feira', 'sexta-feira'],
     ),
     Exercise(
       id: '12',
@@ -100,6 +111,7 @@ class ExerciseService {
       targetedMuscles: ['Latíssimo do dorso', 'Dorsais'],
       description: 'Focado no latíssimo do dorso e nos músculos dorsais, este exercício é realizado na polia.',
       equipmentNeeded: ['Máquina de Polia'],
+      days: ['terça-feira', 'sexta-feira'],
     ),
     Exercise(
       id: '13',
@@ -108,6 +120,7 @@ class ExerciseService {
       targetedMuscles: ['Dorsais', 'Latíssimo do dorso'],
       description: 'Exercício que trabalha os dorsais e o latíssimo do dorso, realizado numa máquina de polia na posição sentada.',
       equipmentNeeded: ['Máquina de Polia'],
+      days: ['terça-feira', 'sexta-feira'],
     ),
     Exercise(
       id: '14',
@@ -116,6 +129,7 @@ class ExerciseService {
       targetedMuscles: ['Deltoides posteriores'],
       description: 'Este exercício foca nos deltoides posteriores, sendo realizado na máquina Peck Deck configurada para movimentos inversos.',
       equipmentNeeded: ['Máquina Peck Deck'],
+      days: ['terça-feira', 'sexta-feira'],
     ),
     Exercise(
       id: '15',
@@ -124,6 +138,7 @@ class ExerciseService {
       targetedMuscles: ['Deltoides médios'],
       description: 'Focado nos deltoides médios, este exercício é realizado em pé, elevando halteres lateralmente.',
       equipmentNeeded: ['Halteres'],
+      days: ['segunda-feira', 'quinta-feira'],
     ),
     Exercise(
       id: '16',
@@ -132,6 +147,7 @@ class ExerciseService {
       targetedMuscles: ['Deltoides médios'],
       description: 'Exercício para isolamento dos deltoides médios, realizado com polia.',
       equipmentNeeded: ['Polia'],
+      days: ['segunda-feira', 'quinta-feira'],
     ),
     Exercise(
       id: '17',
@@ -140,6 +156,7 @@ class ExerciseService {
       targetedMuscles: ['Quadríceps', 'Glúteos', 'Isquiotibiais'],
       description: 'Exercício fundamental para o desenvolvimento das pernas, envolvendo quadríceps, glúteos e isquiotibiais.',
       equipmentNeeded: ['Barra', 'Pesos'],
+      days: ['sábado'],
     ),
     Exercise(
       id: '18',
@@ -148,6 +165,7 @@ class ExerciseService {
       targetedMuscles: ['Quadríceps', 'Glúteos', 'Isquiotibiais'],
       description: 'Focado em fortalecer as pernas, especialmente quadríceps, glúteos e isquiotibiais, realizado na máquina de Leg Press.',
       equipmentNeeded: ['Máquina de Leg Press'],
+      days: ['sábado'],
     ),
     Exercise(
       id: '19',
@@ -156,6 +174,7 @@ class ExerciseService {
       targetedMuscles: ['Quadríceps'],
       description: 'Exercício que isola os quadríceps, realizado em máquina específica para extensão de pernas.',
       equipmentNeeded: ['Máquina de Extensão de Pernas'],
+      days: ['sábado'],
     ),
     Exercise(
       id: '20',
@@ -164,6 +183,7 @@ class ExerciseService {
       targetedMuscles: ['Isquiotibiais'],
       description: 'Este exercício foca nos isquiotibiais, realizado em máquina específica para flexão de pernas.',
       equipmentNeeded: ['Máquina de Flexão de Pernas'],
+      days: ['sábado'],
     ),
     Exercise(
       id: '21',
@@ -172,6 +192,7 @@ class ExerciseService {
       targetedMuscles: ['Bíceps'],
       description: 'Exercício clássico para fortalecimento dos bíceps, realizado com uma barra.',
       equipmentNeeded: ['Barra'],
+      days: ['terça-feira', 'sexta-feira'],
     ),
     Exercise(
       id: '22',
@@ -180,6 +201,7 @@ class ExerciseService {
       targetedMuscles: ['Tríceps'],
       description: 'Exercício para trabalhar os tríceps, realizado na polia alta com corda ou barra.',
       equipmentNeeded: ['Polia Alta', 'Corda ou Barra'],
+      days: ['segunda-feira', 'quinta-feira'],
     ),
     Exercise(
       id: '23',
@@ -188,6 +210,7 @@ class ExerciseService {
       targetedMuscles: ['Deltoides'],
       description: 'Exercício para desenvolvimento completo dos ombros, realizado com halteres.',
       equipmentNeeded: ['Halteres'],
+      days: ['segunda-feira', 'quinta-feira'],
     ),
     Exercise(
       id: '24',
@@ -196,6 +219,7 @@ class ExerciseService {
       targetedMuscles: ['Dorsais', 'Latíssimo do dorso'],
       description: 'Fortalecimento das costas, focando nos músculos dorsais e no latíssimo do dorso, realizado com barra.',
       equipmentNeeded: ['Barra'],
+      days: ['terça-feira', 'sexta-feira'],
     ),
     Exercise(
       id: '25',
@@ -204,6 +228,7 @@ class ExerciseService {
       targetedMuscles: ['Latíssimo do dorso'],
       description: 'Exercício no pulley alto para trabalhar a parte posterior dos ombros e o latíssimo do dorso.',
       equipmentNeeded: ['Máquina de Pulley Alto'],
+      days: ['terça-feira', 'sexta-feira'],
     ),Exercise(
       id: '26',
       name: 'Elevação de Panturrilha em Pé',
@@ -211,6 +236,7 @@ class ExerciseService {
       targetedMuscles: ['Panturrilhas'],
       description: 'Exercício destinado ao fortalecimento das panturrilhas, realizado em pé.',
       equipmentNeeded: ['Máquina de Elevação de Panturrilha'],
+      days: ['sábado'],
     ),
     Exercise(
       id: '27',
@@ -219,6 +245,7 @@ class ExerciseService {
       targetedMuscles: ['Panturrilhas'],
       description: 'Focado nas panturrilhas, este exercício é realizado sentado, ideal para variação de estímulo.',
       equipmentNeeded: ['Máquina de Elevação de Panturrilha Sentado'],
+      days: ['sábado'],
     ),
     Exercise(
       id: '28',
@@ -227,6 +254,7 @@ class ExerciseService {
       targetedMuscles: ['Glúteos', 'Abdutores'],
       description: 'Exercício que trabalha os glúteos e abdutores, realizado em máquina específica para abdução.',
       equipmentNeeded: ['Máquina de Abdução de Pernas'],
+      days: ['sábado'],
     ),
     Exercise(
       id: '29',
@@ -235,6 +263,7 @@ class ExerciseService {
       targetedMuscles: ['Adutores'],
       description: 'Visa o fortalecimento dos músculos adutores, realizado em máquina específica para adução.',
       equipmentNeeded: ['Máquina de Adução de Pernas'],
+      days: ['sábado'],
     ),
     Exercise(
       id: '30',
@@ -243,6 +272,7 @@ class ExerciseService {
       targetedMuscles: ['Quadríceps', 'Glúteos', 'Isquiotibiais'],
       description: 'Variação do agachamento que coloca mais ênfase nos quadríceps, realizado com a barra à frente do corpo.',
       equipmentNeeded: ['Barra'],
+      days: ['sábado'],
     ),
   ];
 

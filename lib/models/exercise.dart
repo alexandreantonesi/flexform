@@ -1,12 +1,12 @@
 // models/exercise.dart
-
 class Exercise {
   final String id;
   final String name;
-  final String category; // For example: 'Strength', 'Cardio'
+  final String category;
   final List<String> targetedMuscles;
   final String description;
   final List<String> equipmentNeeded;
+  final List<String> days;
 
   Exercise({
     required this.id,
@@ -15,5 +15,7 @@ class Exercise {
     required this.targetedMuscles,
     required this.description,
     required this.equipmentNeeded,
+    required this.days,
   });
+
 }

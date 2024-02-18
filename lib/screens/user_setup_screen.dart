@@ -1,6 +1,8 @@
+// screens/user_setup_screen.dart
 import 'package:flexform/screens/exercises_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flexform/models/selection_data.dart';
 
 class UserSetupScreen extends StatelessWidget {
   const UserSetupScreen({Key? key}) : super(key: key);
@@ -16,37 +18,24 @@ class UserSetupScreen extends StatelessWidget {
   }
 }
 
-class SelectionData {
-  int? daysAvailable;
-  int? hoursAvailable;
-  String? mainGoal;
-  int? age;
-  String? experienceLevel;
-  String? name;
-
-  SelectionData({
-    this.daysAvailable,
-    this.hoursAvailable,
-    this.mainGoal,
-    this.age,
-    this.experienceLevel,
-    this.name,
-  });
-/* 
-  @override
-  String toString() {
-    return 'SelectionData(daysAvailable: $daysAvailable, hoursAvailable: $hoursAvailable, mainGoal: $mainGoal, age: $age, experienceLevel: $experienceLevel, name: $name)';
-  } */
-}
-
 class SuccessScreen extends StatelessWidget {
   final SelectionData data;
 
   const SuccessScreen({Key? key, required this.data}) : super(key: key);
 
+  Future<void> savePreferences(SelectionData data) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('daysAvailable', data.daysAvailable ?? 0);
+    await prefs.setInt('hoursAvailable', data.hoursAvailable ?? 0);
+    await prefs.setString('mainGoal', data.mainGoal ?? '');
+    await prefs.setInt('age', data.age ?? 0);
+    await prefs.setString('experienceLevel', data.experienceLevel ?? '');
+    await prefs.setString('name', data.name ?? '');
+    await prefs.setBool('setupCompleted', true);
+  }
+
   @override
   Widget build(BuildContext context) {
-    print('SelectionData received: $data');
     return Scaffold(
       appBar: AppBar(
         title: const Text(""),
@@ -71,7 +60,8 @@ class SuccessScreen extends StatelessWidget {
             ),
             const SizedBox(height: 40),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                await savePreferences(data); // Save the user preferences
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (_) => ExercisesScreen(userPreferences: data),
