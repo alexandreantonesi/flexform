@@ -32,6 +32,11 @@ class SelectionData {
     this.experienceLevel,
     this.name,
   });
+/* 
+  @override
+  String toString() {
+    return 'SelectionData(daysAvailable: $daysAvailable, hoursAvailable: $hoursAvailable, mainGoal: $mainGoal, age: $age, experienceLevel: $experienceLevel, name: $name)';
+  } */
 }
 
 class SuccessScreen extends StatelessWidget {
@@ -41,6 +46,7 @@ class SuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('SelectionData received: $data');
     return Scaffold(
       appBar: AppBar(
         title: const Text(""),
@@ -67,7 +73,9 @@ class SuccessScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => const ExercisesScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => ExercisesScreen(userPreferences: data),
+                  ),
                 );
               },
               child: const Text('Começa a puxar ferro'),
@@ -90,32 +98,33 @@ class SetupProcessState extends State<SetupProcess> {
   int currentStep = 0;
   final SelectionData data = SelectionData();
 
+  List<Widget> get stepWidgets => [
+    StepOne(
+      onSelection: (value) => setState(() => data.daysAvailable = value),
+      initialSelection: data.daysAvailable ?? 0,
+    ),
+    StepTwo(
+      onSelection: (value) => setState(() => data.hoursAvailable = value),
+      initialSelection: data.hoursAvailable ?? 0,
+    ),
+    StepThree(
+      onSelection: (part) => setState(() => data.mainGoal = part),
+      initialSelection: data.mainGoal ?? "Peito, Tríceps, Ombros",
+    ),
+    StepAgeSelection(
+      onSelection: (value) => setState(() => data.age = value),
+    ),
+    StepExperienceLevel(
+      onSelection: (level) => setState(() => data.experienceLevel = level),
+      initialSelection: data.experienceLevel,
+    ),
+    StepUserName(
+      onNameEntered: (name) => setState(() => data.name = name),
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    List<Widget> stepWidgets = [
-      StepOne(
-        onSelection: (value) => setState(() => data.daysAvailable = value),
-        initialSelection: data.daysAvailable ?? 0,
-      ),
-      StepTwo(
-        onSelection: (value) => setState(() => data.hoursAvailable = value),
-        initialSelection: data.hoursAvailable ?? 0,
-      ),
-      StepThree(
-        onSelection: (part) => setState(() => data.mainGoal = part),
-        initialSelection: data.mainGoal ?? "Peito, Tríceps, Ombros",
-      ),
-      StepAgeSelection(
-        onSelection: (value) => setState(() => data.age = value),
-      ),
-      StepExperienceLevel(
-        onSelection: (level) => setState(() => data.experienceLevel = level),
-      ),
-      StepUserName(
-        onNameEntered: (name) => setState(() => data.name = name),
-      ),
-    ];
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Processo de Setup - Passo ${currentStep + 1} de ${stepWidgets.length}"),
@@ -156,7 +165,6 @@ class SetupProcessState extends State<SetupProcess> {
   }
 
   bool isSelectionValid(int stepIndex) {
-    // Validation logic remains the same
     switch (stepIndex) {
       case 0:
         return data.daysAvailable != null;
@@ -351,8 +359,9 @@ class _StepAgeSelectionState extends State<StepAgeSelection> {
 
 class StepExperienceLevel extends StatefulWidget {
   final ValueChanged<String> onSelection;
+  final String? initialSelection;
 
-  const StepExperienceLevel({Key? key, required this.onSelection}) : super(key: key);
+  const StepExperienceLevel({Key? key, this.initialSelection, required this.onSelection}) : super(key: key);
 
   @override
   _StepExperienceLevelState createState() => _StepExperienceLevelState();
@@ -362,30 +371,35 @@ class _StepExperienceLevelState extends State<StepExperienceLevel> {
   String? _selectedLevel;
 
   @override
+  void initState() {
+    super.initState();
+    // Initialize _selectedLevel with the initialSelection from the widget
+    _selectedLevel = widget.initialSelection;
+  }
+
+  @override
   Widget build(BuildContext context) {
     List<String> experienceLevels = [
       'Sou completamente novo',
       'Já treinei anteriormente',
     ];
 
-    return StatefulBuilder(
-      builder: (BuildContext context, StateSetter setState) {
-        return Column(
-          children: experienceLevels.map((level) {
-            return RadioListTile<String>(
-              title: Text(level),
-              value: level,
-              groupValue: _selectedLevel,
-              onChanged: (String? value) {
-                if (value != null) {
-                  setState(() => _selectedLevel = value);
-                  widget.onSelection(value);
-                }
-              },
-            );
-          }).toList(),
+    return Column(
+      children: experienceLevels.map((level) {
+        return RadioListTile<String>(
+          title: Text(level),
+          value: level,
+          groupValue: _selectedLevel,
+          onChanged: (String? value) {
+            if (value != null) {
+              setState(() {
+                _selectedLevel = value;
+              });
+              widget.onSelection(value);
+            }
+          },
         );
-      },
+      }).toList(),
     );
   }
 }
@@ -410,7 +424,6 @@ class _StepUserNameState extends State<StepUserName> {
 
   @override
   Widget build(BuildContext context) {
-
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -425,12 +438,14 @@ class _StepUserNameState extends State<StepUserName> {
           ElevatedButton(
             onPressed: () {
               if (_nameController.text.isNotEmpty) {
-                var parentState = context.findAncestorStateOfType<_SetupProcessState>();
-                var data = parentState?.data;
-                if(data != null) {
-                  data.name = _nameController.text;
+                // Here, we're casting the state to `SetupProcessState`.
+                var parentState = context.findAncestorStateOfType<SetupProcessState>();
+                if (parentState != null) {
+                  parentState.data.name = _nameController.text;
                   Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => SuccessScreen(data: data)),
+                    MaterialPageRoute(
+                      builder: (_) => SuccessScreen(data: parentState.data),
+                    ),
                   );
                 }
               }

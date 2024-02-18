@@ -4,31 +4,39 @@ import 'package:flexform/screens/user_setup_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Required for async main function
+  WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
   final setupCompleted = prefs.getBool('setupCompleted') ?? false;
 
-  runApp(MyApp(setupCompleted: setupCompleted));
+  // Initialize `userPreferences` with default values or from stored data
+  final userPreferences = SelectionData(
+    // Assign default values or retrieve each field from `prefs`
+    daysAvailable: prefs.getInt('daysAvailable'),
+    hoursAvailable: prefs.getInt('hoursAvailable'),
+    mainGoal: prefs.getString('mainGoal'),
+    age: prefs.getInt('age'),
+    experienceLevel: prefs.getString('experienceLevel'),
+    name: prefs.getString('name'),
+  );
+
+  runApp(MyApp(setupCompleted: setupCompleted, userPreferences: userPreferences));
 }
 
 class MyApp extends StatelessWidget {
   final bool setupCompleted;
+  final SelectionData userPreferences;
 
-  const MyApp({super.key, required this.setupCompleted});
+  const MyApp({super.key, required this.setupCompleted, required this.userPreferences});
 
   @override
   Widget build(BuildContext context) {
-    Widget homeScreen = setupCompleted 
-        ? const ExercisesScreen()
-        : const UserSetupScreen();
-
     return MaterialApp(
       title: 'FlexForm',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: homeScreen,
+      home: setupCompleted ? ExercisesScreen(userPreferences: userPreferences) : const UserSetupScreen(),
     );
   }
 }

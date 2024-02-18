@@ -1,54 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flexform/models/exercise.dart';
+import 'package:flexform/widgets/exercise_tile.dart';
+import 'package:flexform/screens/user_setup_screen.dart';
+import 'package:flexform/services/exercise_service.dart';
+import 'package:flexform/models/exercise.dart';
+
 
 class ExercisesScreen extends StatelessWidget {
-  const ExercisesScreen({Key? key}) : super(key: key);
+  final SelectionData userPreferences;
+
+  const ExercisesScreen({Key? key, required this.userPreferences}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    List<Exercise> exercises = ExerciseService.getExercisesForUser(userPreferences);
+    print('User Preferences: $userPreferences');
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Exercícios de hoje'),
       ),
-      body: ListView(
-        children: [
-          ExerciseTile(
-            exerciseName: 'Exercise 1',
-            bodyPart: 'Chest',
+      body: ListView.builder(
+        itemCount: exercises.length,
+        itemBuilder: (context, index) {
+          return ExerciseTile(
+            exerciseName: exercises[index].name,
+            bodyPart: exercises[index].targetedMuscles.join(', '),
             iconData: Icons.fitness_center,
-          ),
-          ExerciseTile(
-            exerciseName: 'Exercise 2',
-            bodyPart: 'Triceps',
-            iconData: Icons.fitness_center,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ExerciseTile extends StatelessWidget {
-  final String exerciseName;
-  final String bodyPart;
-  final IconData iconData;
-
-  const ExerciseTile({
-    Key? key,
-    required this.exerciseName,
-    required this.bodyPart,
-    required this.iconData,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        leading: Icon(iconData),
-        title: Text(exerciseName),
-        subtitle: Text(bodyPart),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () {
-          
+          );
         },
       ),
     );
