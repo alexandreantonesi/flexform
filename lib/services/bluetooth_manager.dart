@@ -1,10 +1,12 @@
-// services/bluetooth_service.dart
+
 import 'package:flutter_blue/flutter_blue.dart';
 
-class BluetoothService {
+// Renaming BluetoothService to BluetoothManager to avoid conflict with FlutterBlue's BluetoothService
+class BluetoothManager {
   FlutterBlue flutterBlue = FlutterBlue.instance;
   List<BluetoothDevice> devicesList = [];
   BluetoothDevice? connectedDevice;
+  // This list holds instances of the BluetoothService class provided by flutter_blue
   List<BluetoothService> services = [];
 
   void startScan() {
@@ -16,7 +18,11 @@ class BluetoothService {
       }
     });
 
-    subscription.cancel(); // You may want to cancel this subscription when you stop scanning or dispose of the class
+    // Ensure to cancel this subscription appropriately.
+  }
+
+  void stopScan() {
+    flutterBlue.stopScan();
   }
 
   void addDeviceToList(final BluetoothDevice device) {
@@ -38,8 +44,7 @@ class BluetoothService {
   }
 
   Future<void> discoverServices(BluetoothDevice device) async {
-    var services = await device.discoverServices();
-    // This is where you would typically set up notifications or write to characteristics
+    services = await device.discoverServices();
   }
 
   void disconnectFromDevice(BluetoothDevice device) async {
@@ -47,5 +52,9 @@ class BluetoothService {
       await device.disconnect();
       connectedDevice = null;
     }
+  }
+
+  bool isDeviceConnected(BluetoothDevice device) {
+    return connectedDevice?.id == device.id;
   }
 }
