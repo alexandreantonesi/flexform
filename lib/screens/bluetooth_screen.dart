@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:flexform/services/bluetooth_manager.dart'; // Updated import
+import 'package:flexform/services/bluetooth_manager.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
 class BluetoothScreen extends StatefulWidget {
@@ -9,7 +9,7 @@ class BluetoothScreen extends StatefulWidget {
 }
 
 class _BluetoothScreenState extends State<BluetoothScreen> {
-  final BluetoothManager _bluetoothManager = BluetoothManager(); // Updated reference
+  final BluetoothManager _bluetoothManager = BluetoothManager();
 
   bool isScanning = false;
 
@@ -21,11 +21,11 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
 
   void startScanning() {
     setState(() => isScanning = true);
-    _bluetoothManager.startScan(); // Updated method call
+    _bluetoothManager.startScan();
     Future.delayed(Duration(seconds: 4), () {
       if (mounted) {
         setState(() => isScanning = false);
-        _bluetoothManager.stopScan(); // Updated method call
+        _bluetoothManager.stopScan();
       }
     });
   }
@@ -55,13 +55,13 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
                 (result) => BluetoothDeviceTile(
                   device: result.device,
                   onTap: () {
-                    if (_bluetoothManager.isDeviceConnected(result.device)) { // Updated method call
-                      _bluetoothManager.disconnectFromDevice(result.device); // Updated method call
+                    if (_bluetoothManager.isDeviceConnected(result.device)) {
+                      _bluetoothManager.disconnectFromDevice(result.device);
                     } else {
-                      _bluetoothManager.connectToDevice(result.device); // Updated method call
+                      _bluetoothManager.connectToDevice(result.device);
                     }
                   },
-                  isConnected: _bluetoothManager.isDeviceConnected(result.device), // Updated method call
+                  isConnected: _bluetoothManager.isDeviceConnected(result.device),
                 ),
               )
               .toList(),

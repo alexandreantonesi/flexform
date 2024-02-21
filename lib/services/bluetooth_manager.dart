@@ -1,12 +1,9 @@
-
 import 'package:flutter_blue/flutter_blue.dart';
 
-// Renaming BluetoothService to BluetoothManager to avoid conflict with FlutterBlue's BluetoothService
 class BluetoothManager {
   FlutterBlue flutterBlue = FlutterBlue.instance;
   List<BluetoothDevice> devicesList = [];
   BluetoothDevice? connectedDevice;
-  // This list holds instances of the BluetoothService class provided by flutter_blue
   List<BluetoothService> services = [];
 
   void startScan() {
@@ -17,8 +14,6 @@ class BluetoothManager {
         addDeviceToList(result.device);
       }
     });
-
-    // Ensure to cancel this subscription appropriately.
   }
 
   void stopScan() {

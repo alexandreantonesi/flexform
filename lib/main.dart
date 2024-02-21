@@ -47,8 +47,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     _widgetOptions = [
       ExercisesScreen(userPreferences: widget.userPreferences),
-      BluetoothScreen(), // Your actual Bluetooth screen
-      // Add more screens as needed
+      BluetoothScreen(),
     ];
   }
 
@@ -82,7 +81,6 @@ class _MyAppState extends State<MyApp> {
               icon: Icon(Icons.bluetooth),
               label: 'Bluetooth',
             ),
-            // Add more items for your bottom navbar here
           ],
           currentIndex: _selectedIndex,
           selectedItemColor: Colors.blue,

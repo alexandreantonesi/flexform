@@ -363,7 +363,6 @@ class _StepExperienceLevelState extends State<StepExperienceLevel> {
   @override
   void initState() {
     super.initState();
-    // Initialize _selectedLevel with the initialSelection from the widget
     _selectedLevel = widget.initialSelection;
   }
 

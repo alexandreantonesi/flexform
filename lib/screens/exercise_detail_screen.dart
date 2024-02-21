@@ -8,8 +8,7 @@ class ExerciseDetailScreen extends StatelessWidget {
   const ExerciseDetailScreen({Key? key, required this.exercise}) : super(key: key);
 
   void startExercise() {
-    // Placeholder: Integrate with Arduino to start tracking the exercise
-    print('Exercise started!');
+    print('exercicio iniciado');
   }
 
   @override
@@ -23,14 +22,10 @@ class ExerciseDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ... Existing code for displaying exercise details
             ElevatedButton(
               onPressed: startExercise,
               child: Text('Iniciar Exercício'),
             ),
-            // ... Existing code for displaying instructions
-            // Placeholder for anatomical information section
-            // You can add more detailed anatomical information here
           ],
         ),
       ),
