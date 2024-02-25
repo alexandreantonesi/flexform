@@ -32,3 +32,19 @@ class ExerciseDetailScreen extends StatelessWidget {
     );
   }
 }
+
+
+
+    void startExercise() {
+        // Start the exercise and listen for data from Arduino for movement detection
+        // TODO: Implement the integration with TensorFlow Lite and Arduino
+    }
+
+    Widget anatomySection() {
+        // Display information about the muscles involved in the exercise
+        // TODO: Retrieve and display muscle information from a suitable model or service
+        return Container(
+            // Placeholder for anatomy section layout
+        );
+    }
+    

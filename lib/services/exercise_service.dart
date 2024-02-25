@@ -281,3 +281,8 @@ class ExerciseService {
     return _exercises.where((exercise) => userPreferences.mainGoal == exercise.category).toList();
   }
 }
+
+  List<Exercise> getExercisesForDay(String day) {
+    // Placeholder for the actual implementation
+    return List<Exercise>.empty(growable: true);
+  }

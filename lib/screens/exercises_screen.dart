@@ -1,11 +1,13 @@
-// exercises_screen.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flexform/models/exercise.dart';
 import 'package:flexform/services/exercise_service.dart';
-import 'package:flexform/widgets/exercise_tile.dart';
 import 'package:flexform/models/selection_data.dart';
 import 'exercise_detail_screen.dart';
+import 'package:flexform/models/exercise.dart';
+import 'package:flexform/widgets/exercise_tile.dart';
+
+
+  // exercises_screen.dart
 
 class ExercisesScreen extends StatelessWidget {
   final SelectionData userPreferences;
