@@ -16,7 +16,7 @@ class ExercisesScreen extends StatelessWidget {
 
   String getCurrentDay() {
     DateTime now = DateTime.now();
-    return DateFormat('EEEE', 'pt_PT').format(now).toLowerCase();
+    return DateFormat('EEEE', 'pt_PT').format(now).toLowerCase().replaceAll('á', 'a').replaceAll('é', 'e');
   }
 
   List<Exercise> getTodayExercises(List<Exercise> exercises) {
