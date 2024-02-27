@@ -1,53 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:flexform/services/exercise_service.dart';
-import 'package:flexform/models/selection_data.dart';
-import 'exercise_detail_screen.dart';
-import 'package:flexform/models/exercise.dart';
-import 'package:flexform/widgets/exercise_tile.dart';
-
-
-  // exercises_screen.dart
 
 class ExercisesScreen extends StatelessWidget {
-  final SelectionData userPreferences;
+  // Assuming that userPreferences should be of type Map, add the type here.
+  // If the type is different, replace 'Map' with the correct type.
+  final Map userPreferences;
 
-  const ExercisesScreen({Key? key, required this.userPreferences}) : super(key: key);
-
-  String getCurrentDay() {
-    DateTime now = DateTime.now();
-    return DateFormat('EEEE', 'pt_PT').format(now).toLowerCase().replaceAll('á', 'a').replaceAll('é', 'e');
-  }
-
-  List<Exercise> getTodayExercises(List<Exercise> exercises) {
-    String today = getCurrentDay();
-    return exercises.where((exercise) => exercise.days.contains(today)).toList();
-  }
+  // If the ExercisesScreen constructor is not supposed to be const, remove the const keyword.
+  ExercisesScreen({required this.userPreferences});
 
   @override
   Widget build(BuildContext context) {
-    List<Exercise> allExercises = ExerciseService.getExercisesForUser(userPreferences);
-    List<Exercise> todayExercises = getTodayExercises(allExercises);
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Exercícios de Hoje'),
+        title: const Text('Weekly Exercise Plan'),
       ),
-      body: ListView.builder(
-        itemCount: todayExercises.length,
-        itemBuilder: (context, index) {
-          final exercise = todayExercises[index];
-          return ExerciseTile(
-            exercise: exercise,
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => ExerciseDetailScreen(exercise: exercise),
-                ),
-              );
-            },
-          );
-        },
+      body: ListView(
+        children: <Widget>[
+          ListTile(title: const Text('Monday: Push exercises')),
+          ListTile(title: const Text('Tuesday: Pull exercises')),
+          ListTile(title: const Text('Wednesday: Rest day')),
+          ListTile(title: const Text('Thursday: Push exercises')),
+          ListTile(title: const Text('Friday: Pull exercises')),
+          ListTile(title: const Text('Saturday: Legs exercises')),
+          ListTile(title: const Text('Sunday: Rest day')),
+        ],
       ),
     );
   }
