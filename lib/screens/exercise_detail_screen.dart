@@ -1,3 +1,4 @@
+
 // screens/exercise_detail_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flexform/models/exercise.dart';
@@ -8,7 +9,7 @@ class ExerciseDetailScreen extends StatelessWidget {
   const ExerciseDetailScreen({Key? key, required this.exercise}) : super(key: key);
 
   void startExercise() {
-    print('exercicio iniciado');
+    print('Exercise started');
   }
 
   @override
@@ -22,29 +23,17 @@ class ExerciseDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(exercise.description),
+            SizedBox(height: 20),
             ElevatedButton(
               onPressed: startExercise,
               child: Text('Iniciar Exercício'),
             ),
+            SizedBox(height: 20),
+            Text('Músculos alvo: ${exercise.targetedMuscles.join(', ')}'),
           ],
         ),
       ),
     );
   }
 }
-
-
-
-    void startExercise() {
-        // Start the exercise and listen for data from Arduino for movement detection
-        // TODO: Implement the integration with TensorFlow Lite and Arduino
-    }
-
-    Widget anatomySection() {
-        // Display information about the muscles involved in the exercise
-        // TODO: Retrieve and display muscle information from a suitable model or service
-        return Container(
-            // Placeholder for anatomy section layout
-        );
-    }
-    
