@@ -1,5 +1,9 @@
-import 'package:flexform/models/selection_data.dart';
+
 import 'package:flutter/material.dart';
+import '../models/selection_data.dart';
+import '../services/exercise_service.dart';
+import '../widgets/exercise_tile.dart';
+import 'exercise_detail_screen.dart';
 
 class ExercisesScreen extends StatelessWidget {
   final SelectionData userPreferences;
@@ -8,21 +12,36 @@ class ExercisesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String dayKey = 'Sunday';
+    final exercises = ExerciseService.getExercisesForDay(dayKey);
+
+    print('Today is overridden to: $dayKey');
+    print('Found ${exercises.length} exercises for Sunday');
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Plano Semanal de Exercícios'),
+        title: const Text('Exercícios para Hoje'),
       ),
-      body: ListView(
-        children: <Widget>[
-          ListTile(title: const Text('Segunda-feira: Exercícios de Empurrar')),
-          ListTile(title: const Text('Terça-feira: Exercícios de Puxar')),
-          ListTile(title: const Text('Quarta-feira: Dia de Descanso')),
-          ListTile(title: const Text('Quinta-feira: Exercícios de Empurrar')),
-          ListTile(title: const Text('Sexta-feira: Exercícios de Puxar')),
-          ListTile(title: const Text('Sábado: Exercícios de Pernas')),
-          ListTile(title: const Text('Domingo: Dia de Descanso')),
-        ],
-      ),
+      body: exercises.isEmpty
+          ? Center(child: Text('Hoje é dia de descanso, não te esqueças de comer propriamente.'))
+          : ListView.builder(
+              itemCount: exercises.length,
+              itemBuilder: (context, index) {
+                final exercise = exercises[index];
+                print('Exercise for Sunday ${index + 1}: ${exercise.name}');
+                return ExerciseTile(
+                  exercise: exercise,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ExerciseDetailScreen(exercise: exercise),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
     );
   }
 }

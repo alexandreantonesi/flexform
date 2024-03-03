@@ -1,6 +1,6 @@
-// widgets/exercise_tile.dart
+
 import 'package:flutter/material.dart';
-import '../models/exercise.dart';
+import 'package:flexform/models/exercise.dart';
 
 class ExerciseTile extends StatelessWidget {
   final Exercise exercise;
@@ -14,11 +14,17 @@ class ExerciseTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(exercise.name),
-      subtitle: Text('Músculos alvo: ${exercise.targetedMuscles.join(', ')}'),
-      trailing: Icon(Icons.chevron_right),
-      onTap: onTap,
+    return Card(
+      child: ListTile(
+        title: Text(exercise.name),
+        leading: Icon(Icons.fitness_center), // Placeholder for exercise icon
+        subtitle: Text('Muscle Group: ${exercise.targetedMuscles.join(', ')}'), // Placeholder for muscle group
+        trailing: IconButton(
+          icon: Icon(Icons.chevron_right),
+          onPressed: onTap,
+        ),
+        onTap: onTap,
+      ),
     );
   }
 }

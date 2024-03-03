@@ -10,7 +10,7 @@ import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeDateFormatting('pt_BR', null);
+  await initializeDateFormatting('pt_PT', null);
 
   final prefs = await SharedPreferences.getInstance();
   final setupCompleted = prefs.getBool('setupCompleted') ?? false;

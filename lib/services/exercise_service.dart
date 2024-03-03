@@ -1,35 +1,60 @@
 
-// services/exercise_service.dart
-
 import '../models/exercise.dart';
-import 'package:flexform/models/selection_data.dart';
 
 class ExerciseService {
-  static Map<String, String> weeklyPlan = {
-    'monday': 'Push',
-    'tuesday': 'Pull',
-    'wednesday': 'Rest',
-    'thursday': 'Push',
-    'friday': 'Pull',
-    'saturday': 'Legs',
-    'sunday': 'Rest',
+  static final Map<String, List<Exercise>> _weeklyPlan = {
+    'Monday': [
+      Exercise(
+        id: '1',
+        name: 'Bench Press',
+        category: 'Push',
+        targetedMuscles: ['Pectorals', 'Triceps'],
+        description: 'A basic upper body push exercise.',
+        equipmentNeeded: ['Barbell'],
+        days: ['Monday', 'Friday'],
+      ),
+    ],
+    'Tuesday': [
+      Exercise(
+        id: '2',
+        name: 'Pull Ups',
+        category: 'Pull',
+        targetedMuscles: ['Back', 'Biceps'],
+        description: 'A fundamental upper body pull exercise.',
+        equipmentNeeded: ['Pull-up Bar'],
+        days: ['Tuesday', 'Saturday'],
+      ),
+    ],
+    'Wednesday': [],
+    'Thursday': [
+      Exercise(
+        id: '3',
+        name: 'Squats',
+        category: 'Legs',
+        targetedMuscles: ['Quadriceps', 'Glutes'],
+        description: 'A key compound exercise for leg day.',
+        equipmentNeeded: ['Barbell'],
+        days: ['Thursday'],
+      ),
+    ],
+    'Friday': [
+    ],
+    'Saturday': [
+    ],
+    'Sunday': [
+      Exercise(
+        id: '4',
+        name: 'Light Jogging',
+        category: 'Cardio',
+        targetedMuscles: ['Legs'],
+        description: 'A light cardio exercise to end the week.',
+        equipmentNeeded: ['None'],
+        days: ['Sunday'],
+      ),
+    ],
   };
 
-  static final List<Exercise> _exercises = [
-    // ... (Exercises list goes here)
-  ];
-
-  static List<Exercise> getExercisesForUser(SelectionData userPreferences) {
-    // Implement more complex logic based on userPreferences if necessary
-    return _exercises.where((exercise) => userPreferences.mainGoal == exercise.category).toList();
-  }
-
   static List<Exercise> getExercisesForDay(String day) {
-    // Match the day with the workout plan, then filter the exercises for that plan.
-    String? plan = weeklyPlan[day.toLowerCase()];
-    if (plan == null) {
-      throw Exception("Day not recognized in the weekly plan.");
-    }
-    return _exercises.where((exercise) => exercise.days.contains(day)).toList();
+    return _weeklyPlan[day] ?? [];
   }
 }
