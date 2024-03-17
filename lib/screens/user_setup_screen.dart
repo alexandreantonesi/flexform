@@ -61,7 +61,7 @@ class SuccessScreen extends StatelessWidget {
             const SizedBox(height: 40),
             ElevatedButton(
               onPressed: () async {
-                await savePreferences(data); // Save the user preferences
+                await savePreferences(data);
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (_) => ExercisesScreen(userPreferences: data),
@@ -427,7 +427,6 @@ class _StepUserNameState extends State<StepUserName> {
           ElevatedButton(
             onPressed: () {
               if (_nameController.text.isNotEmpty) {
-                // Here, we're casting the state to `SetupProcessState`.
                 var parentState = context.findAncestorStateOfType<SetupProcessState>();
                 if (parentState != null) {
                   parentState.data.name = _nameController.text;
